@@ -89,15 +89,50 @@ $(function() {
     var ncmb = _ncmb;
     
     // Canvas Setup
-    var canvas = d.getElementById('mycanvas'),
+    var bgCol = '#f8f1e5',
+        colYellow = '#f9ba32',
+        colBlue = '#426e86',
+        canvas = d.getElementById('mycanvas'),
         ctx = canvas.getContext('2d'),
         centerX = canvas.width / 2,
-        centerY = canvas.height / 2;
+        centerY = canvas.height / 2,
+        r,
+        timerId,
+        isPlaying = false;
+    
     // start page
     ctx.font = "normal 28px Verdana";
     ctx.textAlign = "center";
-    ctx.fillStyle = "#f9ba32";
+    ctx.fillStyle = colBlue;
     ctx.fillText("Stop at Target!", centerX, centerY);
+    
+    // draw Circle
+    var drawCircle = function() {
+      // clear canvas;
+      ctx.fillStyle = bgCol;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // draw
+      ctx.fillStyle = colYellow;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, r, 0, Math.PI * 2, false);
+      ctx.fill();
+      
+      r+=1;
+      timerId = setTimeout(drawCircle, 12);
+    }
+    
+    // Event
+    $(d).on('click.start', '#mycanvas', function() {
+      clearTimeout(timerId);
+      if(isPlaying === false) {
+        // start game;
+        r = 0;
+        drawCircle();
+      }
+      isPlaying = !isPlaying;
+    });
+    
     
     // show user name
     $('#username').text(user.userName + ' [Log out]')
