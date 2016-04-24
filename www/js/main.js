@@ -120,6 +120,10 @@ $(function() {
       ctx.arc(centerX, centerY, r, 0, Math.PI * 2, false);
       ctx.fill();
       
+      // show target
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillText("Target: " + target, centerX, centerY - 35);
+      
       r+=1;
       timerId = setTimeout(drawCircle, 12);
     }
@@ -135,7 +139,13 @@ $(function() {
       } else {
         // stop game
         score = 100 - Math.abs(target - r);
-        alert("target:"+target+" r:"+r+" score:"+score);
+        console.log("target:"+target+" r:"+r+" score:"+score);
+        
+        // draw Score
+        ctx.fillText("You: " + r, centerX, centerY);
+        ctx.font = "bold 35px Verdana";
+        ctx.fillText("Score: " + score, centerX, centerY + 50);
+        ctx.font = "normal 28px Verdana";
       }
       isPlaying = !isPlaying;
     });
