@@ -12,14 +12,18 @@ $(function() {
       client_key = APP.ckey,
       ncmb = new NCMB(application_key, client_key);
 
-  var gamePath = './game.html';
+  var homePath = './index.html', 
+      gamePath = './game.html';
 
   // Utility
   var strTrim = function(str) {
     return str.replace(/　/g," ").trim();
   };
   
+  // index Page
   var loginInit = function(w, d) {
+    console.log('> loginInit');
+    var ncmb = ncmb;
     // create new Account
     var createNewUserAccount = function(username, password) {
       // create new user
@@ -46,7 +50,9 @@ $(function() {
           $pass = $('#password'),
           username = $user.val(),
           password = $pass.val();
+
       console.log(username, password);
+
       if(username && password) {
         // Login
         ncmb.User.login(username, password)
@@ -73,23 +79,42 @@ $(function() {
     });
   }
   
+  // Game Page
+  var gameInit = function(user) {
+    console.log('> gameInit');
+    var ncmb = ncmb;
+    
+    // show user name
+    $('#username').text(user.userName + ' (Log out)')
+    .on('click.logout', function() {
+      // Logout
+      ncmb.User.logout()
+        .then(function() {
+          location.href = homePath;
+        });
+    });
+    
+  }
+  
   // init
   !function(w, d) {
     var $b = $('body'),
-        key = $b.data('key');
+        key = $b.data('key'),
+        // Current User
+        user = ncmb.User.getCurrentUser();
     
     console.log(key);
-    
     switch(key) {
       case 'game':
-      
+        // Check Login:ed
+        if(user === null) {
+          location.href = homePath;
+        }
+        gameInit(user);
       break;
       case 'login':
       default:
-        // Check Already Login-ed
-        // Current User
-        var user = ncmb.User.getCurrentUser();
-        // logined user
+        // Check Already Login:ed
         if(user !== null) {
           location.href = gamePath;
         }
