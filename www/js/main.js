@@ -98,7 +98,9 @@ $(function() {
         centerY = canvas.height / 2,
         r,
         timerId,
-        isPlaying = false;
+        isPlaying = false,
+        target,
+        score = 0;
     
     // start page
     ctx.font = "normal 28px Verdana";
@@ -126,9 +128,14 @@ $(function() {
     $(d).on('click.start', '#mycanvas', function() {
       clearTimeout(timerId);
       if(isPlaying === false) {
-        // start game;
+        // start game
         r = 0;
+        target = Math.floor(Math.random() * 121) + 80;
         drawCircle();
+      } else {
+        // stop game
+        score = 100 - Math.abs(target - r);
+        alert("target:"+target+" r:"+r+" score:"+score);
       }
       isPlaying = !isPlaying;
     });
