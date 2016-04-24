@@ -5,11 +5,18 @@
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, maximum-scale=1, user-scalable=no">
   <meta http-equiv="Content-Security-Policy" content="default-src *; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">
   <link rel="stylesheet" href="components/loader.css">
+  <link rel="stylesheet" href="css/style.css">
   <script src="components/loader.js"></script>
+  <script src="js/ncmb-2.1.0.min.js"></script>
   <script src="js/conf.js"></script>
   <script src="js/main.js"></script>
 </head>
-<body id="game" class="center" data-key="game">
-  <div id="username"></div>
+<body id="game">
+  <input type="hidden" id="js-pagekey" value="game">
+  <header class="header">
+    <div id="username"></div>
+  </header>
+  <section id="main" class="center" role="main">
+  </section>
 </body>
 </html>
