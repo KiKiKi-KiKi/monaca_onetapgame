@@ -84,12 +84,23 @@ $(function() {
   };
   
   // Game Page
-  var gameInit = function(user) {
+  var gameInit = function(w, d, user) {
     console.log('> gameInit');
     var ncmb = _ncmb;
     
+    // Canvas Setup
+    var canvas = d.getElementById('mycanvas'),
+        ctx = canvas.getContext('2d'),
+        centerX = canvas.width / 2,
+        centerY = canvas.height / 2;
+    // start page
+    ctx.font = "normal 28px Verdana";
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#f9ba32";
+    ctx.fillText("Stop at Target!", centerX, centerY);
+    
     // show user name
-    $('#username').text(user.userName + ' (Log out)')
+    $('#username').text(user.userName + ' [Log out]')
     .on('click', function() {
       // Logout
       ncmb.User.logout()
@@ -116,7 +127,7 @@ $(function() {
         if(user === null) {
           location.href = homePath;
         }
-        gameInit(user);
+        gameInit(w, d, user);
       break;
       case 'login':
       default:
