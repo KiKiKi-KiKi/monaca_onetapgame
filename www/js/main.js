@@ -1,14 +1,25 @@
 $(function() {
-  !function(w, d) {
-    // mBaas init
-    var application_key = APP.appkey,
-        client_key = APP.ckey,
-        ncmb = new NCMB(application_key, client_key);
+  /**
+   *  conf.js
+   *  APP = {
+   *   appkey: application_key,
+   *   ckey: client_key
+   *  }
+   */
+   
+  // mBaas init
+  var application_key = APP.appkey,
+      client_key = APP.ckey,
+      ncmb = new NCMB(application_key, client_key);
 
-    var strTrim = function(str) {
-      return str.replace(/　/g," ").trim();
-    };
+  var gamePath = './game.html';
 
+  // Utility
+  var strTrim = function(str) {
+    return str.replace(/　/g," ").trim();
+  };
+  
+  var loginInit = function(w, d) {
     // create new Account
     var createNewUserAccount = function(username, password) {
       // create new user
@@ -23,6 +34,7 @@ $(function() {
           ncmb.User.login(username, password)
             .then(function() {
               alert('新規会員登録成功');
+              location.href = gamePath;
             });
         });
       return user;
@@ -41,6 +53,7 @@ $(function() {
           .then(function() {
             // seccess Login
             alert('ログイン成功');
+            location.href = gamePath;
           })
           .catch(function() {
             // fail Login
@@ -58,5 +71,30 @@ $(function() {
       }
       return false;
     });
+  }
+  
+  // init
+  !function(w, d) {
+    var $b = $('body'),
+        key = $b.data('key');
+    
+    console.log(key);
+    
+    switch(key) {
+      case 'game':
+      
+      break;
+      case 'login':
+      default:
+        // Check Already Login-ed
+        // Current User
+        var user = ncmb.User.getCurrentUser();
+        // logined user
+        if(user !== null) {
+          location.href = gamePath;
+        }
+        loginInit(w, d);
+      break;
+    }
   }(window, document);
 });
