@@ -31,11 +31,10 @@ $(function() {
     // Login
     $(d).on('submit', '#js-login', function() {
       var $user = $('#username'),
-          $pass = $('password'),
+          $pass = $('#password'),
           username = $user.val(),
           password = $pass.val();
-      username = strTrim(username);
-      password = strTrim(password);
+      console.log(username, password);
       if(username && password) {
         // Login
         ncmb.User.login(username, password)
