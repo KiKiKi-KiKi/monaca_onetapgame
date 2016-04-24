@@ -36,6 +36,14 @@ input {
   outline: 0;
   box-shadow: 0 0 3px #f9ba32;
 }
+.inputField.error {
+  color: #d24136;
+  border-color: #d24136
+}
+.inputField.error:focus {
+  border-color: #d24136;
+  box-shadow: 0 0 3px #d24136;
+}
 .btn {
   color: #FFF;
   font-size: 1.6rem;
