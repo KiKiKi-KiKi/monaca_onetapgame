@@ -132,6 +132,25 @@ $(function() {
       r+=1;
       timerId = setTimeout(drawCircle, 12);
     };
+    
+    var gameReset = function() {
+      // reset
+      scores = [];
+      target = 0;
+      
+      // agein
+      ctx.fillStyle = colYellow;
+      ctx.font = "bold 20px Verdana";
+      ctx.fillText("Again?", centerX, centerY + 100);
+      
+      $canvas.on('touchend.gameReset', function() {
+        $canvas.off('touchend.gameReset');
+        // reset score
+        resetScores();
+        
+        game(0);
+      });
+    };
 
     var game = function(n) {
       // reset
@@ -150,8 +169,35 @@ $(function() {
       ctx.fillText("Target: " + target, centerX, centerY - 35);
 
       // Event
-      console.log(isPlaying  );
       $canvas.on('touchend.game', touchEvent);
+    };
+
+    var showTotalScore = function(scores) {
+      var total = 0;
+      for(var i=0; i<3; i+=1) {
+        total += (scores[i]-0);
+      }
+      // reset
+      ctx.fillStyle = bgCol;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // show score
+      ctx.fillStyle = colText;
+      ctx.font = "bold 32px Verdana";
+      ctx.fillText("Total Score", centerX, centerY - 40);
+      
+      setTimeout(function() {
+        ctx.fillStyle = colRed;
+        ctx.font = "bold 42px Verdana";
+        ctx.fillText(total + '点', centerX, centerY + 20);
+        
+        // save score to DataSrote
+        saveScore(user, total, showRanking);
+        
+        setTimeout(gameReset, 700);
+      }, 700);
+      
+      return total;
     };
 
     var touchEvent = function() {
@@ -168,7 +214,7 @@ $(function() {
         // draw Score
         ctx.fillText("You: " + r, centerX, centerY);
         ctx.fillStyle = colRed;
-        ctx.font = "bold 35px Verdana";
+        ctx.font = "bold 36px Verdana";
         ctx.fillText("Score: " + score, centerX, centerY + 50);
         ctx.fillStyle = colText;
         ctx.font = "normal 20px Verdana";
@@ -188,6 +234,7 @@ $(function() {
           $canvas.on('touchend.gameEnd', function() {
             $canvas.off('touchend.gameEnd');
             console.log(scores);
+            showTotalScore(scores);
           });
         } else {
           // next
@@ -222,7 +269,7 @@ $(function() {
   };
 
   // Save Score
-  var saveScore = function(score, callback) {
+  var saveScore = function(user, score, callback) {
     var ncmb = _ncmb,
         Rank = ncmb.DataStore("Rank"),
         rank;
@@ -282,7 +329,7 @@ $(function() {
     return score;
   };
 
-  var resetScore = function() {
+  var resetScores = function() {
     $('#js-scores').find('.js-score').empty();
   }
 
