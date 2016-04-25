@@ -6,25 +6,25 @@ $(function() {
    *   ckey: client_key
    *  }
    */
-   
+
   // mBaas init
   var application_key = APP.appkey,
       client_key = APP.ckey,
       _ncmb = new NCMB(application_key, client_key);
 
-  var homePath = './index.html', 
+  var homePath = './index.html',
       gamePath = './game.html';
 
   // Utility
   var strTrim = function(str) {
     return str.replace(/　/g," ").trim();
   };
-  
+
   // index Page
   var loginInit = function(w, d) {
     console.log('> loginInit');
     var ncmb = _ncmb;
-    
+
     // create new Account
     var createNewUserAccount = function(username, password) {
       // create new user
@@ -82,19 +82,22 @@ $(function() {
     });
     return;
   };
-  
+
   // Game Page
   var gameInit = function(w, d, user) {
     console.log('> gameInit');
     var ncmb = _ncmb;
-    
+
     // show Ranking
     showRanking();
-    
+
     // Canvas Setup
-    var bgCol = '#F8F9FA',
+    var bgCol     = '#F8F9FA',
         colYellow = '#f9ba32',
-        colBlue = '#426e86',
+        colBlue   = '#426e86',
+        colRed    = '#af1c1c',
+        colText   = '#2f3131',
+        $canvas = $('#mycanvas'),
         canvas = d.getElementById('mycanvas'),
         ctx = canvas.getContext('2d'),
         centerX = canvas.width / 2,
@@ -103,80 +106,102 @@ $(function() {
         timerId,
         isPlaying = false,
         target,
-        score = 0,
-        Rank = ncmb.DataStore("Rank");
-    
+        scores = [],
+        score = 0;
+
     // start page
     ctx.font = "normal 28px Verdana";
     ctx.textAlign = "center";
-    ctx.fillStyle = colBlue;
-    ctx.fillText("Stop at Target!", centerX, centerY);
-    
+
     // draw Circle
     var drawCircle = function() {
       // clear canvas;
       ctx.fillStyle = bgCol;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      
+
       // draw
       ctx.fillStyle = colBlue;
       ctx.beginPath();
       ctx.arc(centerX, centerY, r, 0, Math.PI * 2, false);
       ctx.fill();
-      
+
       // show target
       ctx.fillStyle = colYellow;
       ctx.fillText("Target: " + target, centerX, centerY - 35);
-      
+
       r+=1;
       timerId = setTimeout(drawCircle, 12);
-    }
-    
-    // Event
-    $('#mycanvas').on('touchend', function() {
+    };
+
+    var game = function(n) {
+      // reset
+      r = 0;
+      score = 0;
+      target = Math.floor(Math.random() * 121) + 80;
+      ctx.fillStyle = bgCol;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.font = "normal 18px Verdana";
+      ctx.fillStyle = colText;
+      ctx.fillText((n+1) + "回目", centerX, centerY - 70);
+      ctx.font = "normal 28px Verdana";
+      ctx.fillStyle = colBlue;
+      ctx.fillText("Stop at Target!", centerX, centerY - 100);
+      ctx.fillText("Target: " + target, centerX, centerY - 35);
+
+      // Event
+      console.log(isPlaying  );
+      $canvas.on('touchend.game', touchEvent);
+    };
+
+    var touchEvent = function() {
       clearTimeout(timerId);
       if(isPlaying === false) {
         // start game
-        r = 0;
-        target = Math.floor(Math.random() * 121) + 80;
         drawCircle();
       } else {
+        var gameCount = scores.length;
         // stop game
         score = 100 - Math.abs(target - r);
         console.log("target:"+target+" r:"+r+" score:"+score);
-        
+
         // draw Score
         ctx.fillText("You: " + r, centerX, centerY);
+        ctx.fillStyle = colRed;
         ctx.font = "bold 35px Verdana";
         ctx.fillText("Score: " + score, centerX, centerY + 50);
-        ctx.font = "normal 28px Verdana";
+        ctx.fillStyle = colText;
+        ctx.font = "normal 20px Verdana";
+
+        // unbind touch event
+        $canvas.off('touchend.game');
+        scores[gameCount] = score;
         
-        // save score to nifty cloud mobile backend
-        // create new record
-        var rank = new Rank;
-        // set(key, value)
-        rank.set("username", user.userName);
-        rank.set("score", score);
-        // ACL Access Control List
-        // => refs. http://mb.cloud.nifty.com/doc/current/sdkguide/javascript/role.html
-        var acl = new ncmb.Acl();
-        // Read role: Public
-        acl.setPublicReadAccess(true);
-        // Write role: user only
-        acl.setUserWriteAccess(user, true);
-        rank.set("acl", acl);
-        // save
-        rank.save()
-          .then(function() {
-            // update ranking list
-            showRanking();
+        // next Game count
+        gameCount += 1;
+        // show score
+        showScore(gameCount, score);
+        
+        if(gameCount >= 3) {
+          // game set
+          ctx.fillText("Show Total Score", centerX, centerY + 100);
+          $canvas.on('touchend.gameEnd', function() {
+            $canvas.off('touchend.gameEnd');
+            console.log(scores);
           });
+        } else {
+          // next
+          ctx.fillText("Touch to Next", centerX, centerY + 100);
+          $canvas.on('touchend.gameStart', function() {
+            $canvas.off('touchend.gameStart');
+            game(gameCount);
+          });
+        }
       }
       isPlaying = !isPlaying;
-    });
-    
-    
-    // show user name
+    };
+
+    // show user name & logout Event
     $('#username').text(user.userName + ' [Log out]')
     .on('click', function() {
       // Logout
@@ -189,9 +214,41 @@ $(function() {
           console.log(e);
         });
     });
+    
+    // game start
+    game(0);
+    
     return;
   };
-  
+
+  // Save Score
+  var saveScore = function(score, callback) {
+    var ncmb = _ncmb,
+        Rank = ncmb.DataStore("Rank"),
+        rank;
+    // save score to nifty cloud mobile backend
+    // create new record
+    rank = new Rank
+    // set(key, value)
+    rank.set("username", user.userName);
+    rank.set("score", score);
+    // ACL Access Control List
+    // => refs. http://mb.cloud.nifty.com/doc/current/sdkguide/javascript/role.html
+    var acl = new ncmb.Acl();
+    // Read role: Public
+    acl.setPublicReadAccess(true);
+    // Write role: user only
+    acl.setUserWriteAccess(user, true);
+    rank.set("acl", acl);
+    // save
+    rank.save()
+      .then(function() {
+        if(typeof(callback) === 'function') {
+          callback();
+        }
+      });
+  };
+
   // Show Ranking List
   var showRanking = function() {
     var ncmb = _ncmb,
@@ -218,6 +275,13 @@ $(function() {
     return;
   };
   
+  // show score
+  var showScore = function(n, score) {
+    var $scores = $('#js-scores');
+    $scores.find('.n' + n).text(n + '回目: ' + score + '点');
+    return score;
+  };
+
   // init
   !function(w, d) {
     var key = $('#js-pagekey').val(),
