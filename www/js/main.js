@@ -278,9 +278,13 @@ $(function() {
   // show score
   var showScore = function(n, score) {
     var $scores = $('#js-scores');
-    $scores.find('.n' + n).text(n + '回目: ' + score + '点');
+    $scores.find('.score' + n).text(score + '点');
     return score;
   };
+
+  var resetScore = function() {
+    $('#js-scores').find('.js-score').empty();
+  }
 
   // init
   !function(w, d) {

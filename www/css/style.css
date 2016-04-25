@@ -154,14 +154,14 @@ h6 { font-size: 1.2rem; }
   font-size: 1.4rem;
   border-bottom: 1px solid #3a424c;
 }
-.scoresTable td {
+.scoresTable .cell {
   text-align: left;
   width: 33.333%;
 }
-.scoresTable td.n1 {
+.scoresTable .cellFirst {
   padding-left: 20px;
 }
-.scoresTable td.n3 {
+.scoresTable .cellLast {
   padding-right: 20px;
 }
 
