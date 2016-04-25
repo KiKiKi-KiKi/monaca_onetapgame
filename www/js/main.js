@@ -119,13 +119,13 @@ $(function() {
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
       // draw
-      ctx.fillStyle = colYellow;
+      ctx.fillStyle = colBlue;
       ctx.beginPath();
       ctx.arc(centerX, centerY, r, 0, Math.PI * 2, false);
       ctx.fill();
       
       // show target
-      ctx.fillStyle = "#FFFFFF";
+      ctx.fillStyle = colYellow;
       ctx.fillText("Target: " + target, centerX, centerY - 35);
       
       r+=1;
@@ -133,7 +133,7 @@ $(function() {
     }
     
     // Event
-    $(d).on('click.start', '#mycanvas', function() {
+    $('#mycanvas').on('touchend', function() {
       clearTimeout(timerId);
       if(isPlaying === false) {
         // start game
@@ -184,8 +184,9 @@ $(function() {
         .then(function() {
           location.href = homePath;
         })
-        .catch(function() {
-          alert('fail');
+        .catch(function(e) {
+          alert('fail logout');
+          console.log(e);
         });
     });
     return;
