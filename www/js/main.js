@@ -88,6 +88,9 @@ $(function() {
     console.log('> gameInit');
     var ncmb = _ncmb;
     
+    // show Ranking
+    showRanking();
+    
     // Canvas Setup
     var bgCol = '#f8f1e5',
         colYellow = '#f9ba32',
@@ -163,7 +166,11 @@ $(function() {
         acl.setUserWriteAccess(user, true);
         rank.set("acl", acl);
         // save
-        rank.save();
+        rank.save()
+          .then(function() {
+            // update ranking list
+            showRanking();
+          });
       }
       isPlaying = !isPlaying;
     });
@@ -181,6 +188,32 @@ $(function() {
           alert('fail');
         });
     });
+    return;
+  };
+  
+  // Show Ranking List
+  var showRanking = function() {
+    var ncmb = _ncmb,
+        Rank = ncmb.DataStore("Rank");
+    // sql
+    Rank.limit(5)
+      .order("score", true)
+      .fetchAll()
+      .then(function(ary) {
+        var $ul = $('#js-ranking'),
+            list = '';
+        $ul.empty();
+        $.each(ary, function(i, rank) {
+          list += [
+            "<li>",
+            i + 1 + "位 ",
+            rank.get("username") + "さん : ",
+            rank.get("score") + "点",
+            "</li>"
+          ].join("");
+        });
+        $ul.append(list);
+      });
     return;
   };
   

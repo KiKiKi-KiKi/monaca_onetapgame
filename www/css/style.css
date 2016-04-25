@@ -39,6 +39,19 @@ input[type="button"]::focus {
   outline-offset: -2px;
 }
 
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  color: #2f3131;
+  margin: 0 0 .5em;
+}
+h1 { font-size: 3.6rem; }
+h2, .pageTitle { font-size: 3.0rem; }
+h3, .heading { font-size: 2.4rem; }
+h4 { font-size: 1.8rem; }
+h5 { font-size: 1.4rem; }
+h6 { font-size: 1.2rem; }
+
+
 /* class */
 .center {
   text-align: center;
@@ -73,7 +86,7 @@ input[type="button"]::focus {
   font-size-adjust: 0.508;
   text-align: center;
   line-height: 34px;
-  letter-spacing: 0.25em;
+  letter-spacing: 0.2em;
   position: relative;
   display: inline-block;
   padding: 8px .75em;
@@ -119,4 +132,18 @@ input[type="button"]::focus {
 /* game */
 #mycanvas {
   margin: 10px auto;
+}
+
+/* lanking */
+.ranking .heading {
+  border-bottom: 1px solid #2f3131;
+}
+.rankingList {
+  font-size: 1.8rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.rankingList > li {
+  padding: 0 0 7px;
 }
