@@ -22,7 +22,16 @@
     <canvas id="mycanvas" width="300" height="300"></canvas>
     <div class="ranking">
       <h1 class="heading">Ranking</h1>
-      <ul id="js-ranking" class="rankingList"></ul>
+      <table class="rankingTable">
+        <thead>
+          <tr>
+            <th class="rank">Rank</th>
+            <th class="user">User</th>
+            <th class="score">Score</th>
+          </tr>
+        </thead>
+        <tbody id="js-ranking"></tbody>
+      </table>
     </div>
   </section>
 </body>

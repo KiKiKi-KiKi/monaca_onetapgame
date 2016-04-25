@@ -92,7 +92,7 @@ $(function() {
     showRanking();
     
     // Canvas Setup
-    var bgCol = '#f8f1e5',
+    var bgCol = '#F8F9FA',
         colYellow = '#f9ba32',
         colBlue = '#426e86',
         canvas = d.getElementById('mycanvas'),
@@ -201,19 +201,19 @@ $(function() {
       .order("score", true)
       .fetchAll()
       .then(function(ary) {
-        var $ul = $('#js-ranking'),
+        var $table = $('#js-ranking'),
             list = '';
-        $ul.empty();
+        $table.empty();
         $.each(ary, function(i, rank) {
           list += [
-            "<li>",
-            i + 1 + "位 ",
-            rank.get("username") + "さん : ",
-            rank.get("score") + "点",
-            "</li>"
+            '<tr>',
+            '<td class="rank">' + (i + 1) + "位</td>",
+            '<td class="user">' + rank.get("username") + "さん</td>",
+            '<td class="score">' + rank.get("score") + "点</td>",
+            '</tr>'
           ].join("");
         });
-        $ul.append(list);
+        $table.append(list);
       });
     return;
   };
