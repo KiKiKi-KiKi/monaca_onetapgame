@@ -100,7 +100,8 @@ $(function() {
         timerId,
         isPlaying = false,
         target,
-        score = 0;
+        score = 0,
+        Rank = ncmb.DataStore("Rank");
     
     // start page
     ctx.font = "normal 28px Verdana";
@@ -146,6 +147,23 @@ $(function() {
         ctx.font = "bold 35px Verdana";
         ctx.fillText("Score: " + score, centerX, centerY + 50);
         ctx.font = "normal 28px Verdana";
+        
+        // save score to nifty cloud mobile backend
+        // create new record
+        var rank = new Rank;
+        // set(key, value)
+        rank.set("username", user.userName);
+        rank.set("score", score);
+        // ACL Access Control List
+        // => refs. http://mb.cloud.nifty.com/doc/current/sdkguide/javascript/role.html
+        var acl = new ncmb.Acl();
+        // Read role: Public
+        acl.setPublicReadAccess(true);
+        // Write role: user only
+        acl.setUserWriteAccess(user, true);
+        rank.set("acl", acl);
+        // save
+        rank.save();
       }
       isPlaying = !isPlaying;
     });
